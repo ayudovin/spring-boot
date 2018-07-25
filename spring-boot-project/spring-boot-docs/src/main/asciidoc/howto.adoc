@@ -753,6 +753,22 @@ This error is not fatal, and the application still starts with HTTP/1.1 SSL supp
 
 
 
+[[howto-configure-http2-netty]]
+==== HTTP/2 with Reactor Netty
+The `spring-boot-webflux-starter` is using by default Reactor Netty as a server.
+Reactor Netty can be configured for HTTP/2 using the JDK support with JDK 9 or later.
+For JDK 8 environments, or for optimal runtime performance, this server also supports
+HTTP/2 with native libraries. To enable that, your application needs to have an
+additional dependency.
+
+Spring Boot manages the version for the
+`io.netty:netty-tcnative-boringssl-static` "uber jar", containing native libraries for
+all platforms. Developers can choose to import only the required dependendencies using
+a classifier (see http://netty.io/wiki/forked-tomcat-native.html[the Netty official
+documentation]).
+
+
+
 [[howto-configure-webserver]]
 === Configure the Web Server
 
@@ -2207,8 +2223,17 @@ To automatically run Flyway database migrations on startup, add the
 The migrations are scripts in the form `V<VERSION>__<NAME>.sql` (with `<VERSION>` an
 underscore-separated version, such as '`1`' or '`2_1`'). By default, they are in a folder
 called `classpath:db/migration`, but you can modify that location by setting
-`spring.flyway.locations`. You can also add a special `{vendor}` placeholder to use
-vendor-specific scripts. Assume the following:
+`spring.flyway.locations`. This is a comma-separated list of one or more `classpath:`
+or `filesystem:` locations. For example, the following configuration would search for
+scripts in both the default classpath location and the `/opt/migration` directory:
+
+[source,properties,indent=0]
+----
+	spring.flyway.locations=classpath:db/migration,filesystem:/opt/migration
+----
+
+You can also add a special `{vendor}` placeholder to use vendor-specific scripts. Assume
+the following:
 
 [source,properties,indent=0]
 ----
