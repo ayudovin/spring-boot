@@ -319,8 +319,8 @@ public class TomcatWebServer implements WebServer {
 	private String getPortsDescription(boolean localPort) {
 		StringBuilder ports = new StringBuilder();
 		for (Connector connector : this.tomcat.getService().findConnectors()) {
-			ports.append(ports.length() != 0 ? " " : "");
-			int port = (localPort ? connector.getLocalPort() : connector.getPort());
+			ports.append((ports.length() != 0) ? " " : "");
+			int port = localPort ? connector.getLocalPort() : connector.getPort();
 			ports.append(port + " (" + connector.getScheme() + ")");
 		}
 		return ports.toString();
