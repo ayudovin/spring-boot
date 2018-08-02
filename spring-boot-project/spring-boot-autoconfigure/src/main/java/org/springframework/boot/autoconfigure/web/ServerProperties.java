@@ -365,10 +365,6 @@ public class ServerProperties {
 		 */
 		private int acceptCount = 0;
 
-		/**
-		 * Maximum amount of request body to swallow.
-		 */
-		private int maxSwallowSize = 0;
 
 		/**
 		 * Comma-separated list of additional patterns that match jars to ignore for TLD
@@ -500,14 +496,6 @@ public class ServerProperties {
 
 		public int getMaxHttpHeaderSize() {
 			return this.maxHttpHeaderSize;
-		}
-
-		public int getMaxSwallowSize() {
-			return this.maxSwallowSize;
-		}
-
-		public void setMaxSwallowSize(int maxSwallowSize) {
-			this.maxSwallowSize = maxSwallowSize;
 		}
 
 		public void setMaxHttpHeaderSize(int maxHttpHeaderSize) {
