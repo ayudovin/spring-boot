@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.boot.autoconfigure.jms.activemq;
+package org.springframework.boot.autoconfigure.jms;
 
 import java.time.Duration;
 
@@ -24,10 +24,10 @@ import java.time.Duration;
  * @author Stephane Nicoll
  * @since 2.1.0
  */
-public class PooledConnectionFactoryProperties {
+public class JmsPoolConnectionFactoryProperties {
 
 	/**
-	 * Whether a PooledConnectionFactory should be created, instead of a regular
+	 * Whether a JmsPoolConnectionFactory should be created, instead of a regular
 	 * ConnectionFactory.
 	 */
 	private boolean enabled;
@@ -44,17 +44,6 @@ public class PooledConnectionFactoryProperties {
 	private Duration blockIfFullTimeout = Duration.ofMillis(-1);
 
 	/**
-	 * Whether to create a connection on startup. Can be used to warm up the pool on
-	 * startup.
-	 */
-	private boolean createConnectionOnStartup = true;
-
-	/**
-	 * Connection expiration timeout.
-	 */
-	private Duration expiryTimeout = Duration.ofMillis(0);
-
-	/**
 	 * Connection idle timeout.
 	 */
 	private Duration idleTimeout = Duration.ofSeconds(30);
@@ -65,14 +54,9 @@ public class PooledConnectionFactoryProperties {
 	private int maxConnections = 1;
 
 	/**
-	 * Maximum number of active sessions per connection.
+	 * Maximum number of pooled sessions per connection in the pool.
 	 */
-	private int maximumActiveSessionPerConnection = 500;
-
-	/**
-	 * Reset the connection when a "JMSException" occurs.
-	 */
-	private boolean reconnectOnException = true;
+	private int maxSessionsPerConnection = 500;
 
 	/**
 	 * Time to sleep between runs of the idle connection eviction thread. When negative,
@@ -110,22 +94,6 @@ public class PooledConnectionFactoryProperties {
 		this.blockIfFullTimeout = blockIfFullTimeout;
 	}
 
-	public boolean isCreateConnectionOnStartup() {
-		return this.createConnectionOnStartup;
-	}
-
-	public void setCreateConnectionOnStartup(boolean createConnectionOnStartup) {
-		this.createConnectionOnStartup = createConnectionOnStartup;
-	}
-
-	public Duration getExpiryTimeout() {
-		return this.expiryTimeout;
-	}
-
-	public void setExpiryTimeout(Duration expiryTimeout) {
-		this.expiryTimeout = expiryTimeout;
-	}
-
 	public Duration getIdleTimeout() {
 		return this.idleTimeout;
 	}
@@ -142,21 +110,23 @@ public class PooledConnectionFactoryProperties {
 		this.maxConnections = maxConnections;
 	}
 
+	@Deprecated
 	public int getMaximumActiveSessionPerConnection() {
-		return this.maximumActiveSessionPerConnection;
+		return getMaxSessionsPerConnection();
 	}
 
+	@Deprecated
 	public void setMaximumActiveSessionPerConnection(
 			int maximumActiveSessionPerConnection) {
-		this.maximumActiveSessionPerConnection = maximumActiveSessionPerConnection;
+		setMaxSessionsPerConnection(maximumActiveSessionPerConnection);
 	}
 
-	public boolean isReconnectOnException() {
-		return this.reconnectOnException;
+	public int getMaxSessionsPerConnection() {
+		return this.maxSessionsPerConnection;
 	}
 
-	public void setReconnectOnException(boolean reconnectOnException) {
-		this.reconnectOnException = reconnectOnException;
+	public void setMaxSessionsPerConnection(int maxSessionsPerConnection) {
+		this.maxSessionsPerConnection = maxSessionsPerConnection;
 	}
 
 	public Duration getTimeBetweenExpirationCheck() {

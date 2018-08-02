@@ -5110,8 +5110,8 @@ sensible settings that you can control by external configuration properties in
 ----
 
 If you'd rather use native pooling, you can do so by adding a dependency to
-`org.apache.activemq:activemq-jms-pool` and configuring the `PooledConnectionFactory`
-accordingly, as shown in the following example:
+`org.messaginghub:pooled-jms` and configuring the `JmsPoolConnectionFactory` accordingly,
+as shown in the following example:
 
 [source,properties,indent=0]
 ----
@@ -5176,8 +5176,8 @@ sensible settings that you can control by external configuration properties in
 ----
 
 If you'd rather use native pooling, you can do so by adding a dependency to
-`org.apache.activemq:activemq-jms-pool` and configuring the `PooledConnectionFactory`
-accordingly, as shown in the following example:
+`org.messaginghub:pooled-jms` and configuring the `JmsPoolConnectionFactory` accordingly,
+as shown in the following example:
 
 [source,properties,indent=0]
 ----
