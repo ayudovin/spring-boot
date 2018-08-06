@@ -100,7 +100,7 @@ content into your application. Rather, pick only the properties that you need.
 	spring.jmx.default-domain= # JMX domain name.
 	spring.jmx.enabled=true # Expose management beans to the JMX domain.
 	spring.jmx.server=mbeanServer # MBeanServer bean name.
-	spring.jmx.unique-names=false # Set if unique runtime object names should be ensured.
+	spring.jmx.unique-names=false # Whether unique runtime object names should be ensured.
 
 	# Email ({sc-spring-boot-autoconfigure}/mail/MailProperties.{sc-ext}[MailProperties])
 	spring.mail.default-encoding=UTF-8 # Default MimeMessage encoding.
@@ -161,6 +161,13 @@ content into your application. Rather, pick only the properties that you need.
 	spring.sendgrid.proxy.host= # SendGrid proxy host.
 	spring.sendgrid.proxy.port= # SendGrid proxy port.
 
+	# TASK EXECUTION  ({sc-spring-boot-autoconfigure}/task/TaskProperties.{sc-ext}[TaskProperties])
+	spring.task.pool.allow-core-thread-timeout=true # Whether core threads are allowed to time out. This enables dynamic growing and shrinking of the pool.
+	spring.task.pool.core-size=8 # Core number of threads.
+	spring.task.pool.keep-alive=60s # Time limit for which threads may remain idle before being terminated.
+	spring.task.pool.max-size= # Maximum allowed number of threads. If tasks are filling up the queue, the pool can expand up to that size to accommodate the load. Ignored if the queue is unbounded.
+	spring.task.pool.queue-capacity= # Queue capacity. A unbounded capacity does not increase the pool and therefore ignores the "max-size" parameter.
+	spring.task.thread-name-prefix=executor- # Prefix to use for the names of newly created threads.
 
 	# ----------------------------------------
 	# WEB PROPERTIES
@@ -1207,7 +1214,6 @@ content into your application. Rather, pick only the properties that you need.
 	management.endpoints.jmx.exposure.include=* # Endpoint IDs that should be included or '*' for all.
 	management.endpoints.jmx.exposure.exclude= # Endpoint IDs that should be excluded or '*' for all.
 	management.endpoints.jmx.static-names= # Additional static properties to append to all ObjectNames of MBeans representing Endpoints.
-	management.endpoints.jmx.unique-names=false # Whether to ensure that ObjectNames are modified in case of conflict.
 
 	# ENDPOINTS WEB CONFIGURATION ({sc-spring-boot-actuator-autoconfigure}/endpoint/web/WebEndpointProperties.{sc-ext}[WebEndpointProperties])
 	management.endpoints.web.exposure.include=health,info # Endpoint IDs that should be included or '*' for all.
