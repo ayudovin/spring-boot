@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package org.springframework.boot.loader.tools;
+package org.springframework.boot.task;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 /**
- * Indicates that the annotated element uses unsafe Java calls.
+ * Callback interface that can be used to customize a {@link ThreadPoolTaskScheduler}.
  *
- * @author Phillip Webb
+ * @author Stephane Nicoll
+ * @since 2.1.0
  */
-@Retention(RetentionPolicy.CLASS)
-@Target({ ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.TYPE })
-@Documented
-@interface UsesUnsafeJava {
+@FunctionalInterface
+public interface TaskSchedulerCustomizer {
+
+	/**
+	 * Callback to customize a {@link ThreadPoolTaskScheduler} instance.
+	 * @param taskScheduler the task scheduler to customize
+	 */
+	void customize(ThreadPoolTaskScheduler taskScheduler);
 
 }

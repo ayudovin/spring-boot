@@ -403,8 +403,10 @@ sensible overriding of values. Properties are considered in the following order:
 on your home directory (`~/.spring-boot-devtools.properties` when devtools is active).
 . {spring-javadoc}/test/context/TestPropertySource.{dc-ext}[`@TestPropertySource`]
 annotations on your tests.
-. {dc-spring-boot-test}/context/SpringBootTest.{dc-ext}[`@SpringBootTest#properties`]
-annotation attribute on your tests.
+. `properties` attribute on your tests. Available on
+{dc-spring-boot-test}/context/SpringBootTest.{dc-ext}[`@SpringBootTest`] and the
+<<boot-features-testing-spring-boot-applications-testing-autoconfigured-tests,test
+annotations for testing a particular slice of your application>>.
 . Command line arguments.
 . Properties from `SPRING_APPLICATION_JSON` (inline JSON embedded in an environment
 variable or system property).
@@ -6136,22 +6138,22 @@ in a similar manner, as shown in the following example:
 
 
 
-[[boot-features-task-execution]]
-== Task Execution
+[[boot-features-task-execution-scheduling]]
+== Task Execution and Scheduling
 In the absence of a `TaskExecutor` bean in the context, Spring Boot auto-configures a
 `ThreadPoolTaskExecutor` with sensible defaults that can be automatically associated to
 asynchronous task execution (`@EnableAsync`) and Spring MVC asynchronous request
 processing.
 
 The thread pool uses 8 core threads that can grow and shrink according to the load. Those
-default settings can be fine-tuned using the `spring.task` namespace as shown in the
-following example:
+default settings can be fine-tuned using the `spring.task.execution` namespace as shown in
+the following example:
 
 [source,properties,indent=0]
 ----
-	spring.task.pool.max-threads=16
-	spring.task.pool.queue-capacity=100
-	spring.task.pool.keep-alive=10s
+	spring.task.execution.pool.max-threads=16
+	spring.task.execution.pool.queue-capacity=100
+	spring.task.execution.pool.keep-alive=10s
 ----
 
 This changes the thread pool to use a bounded queue so that when the queue is full (100
@@ -6159,6 +6161,12 @@ tasks), the thread pool increases to maximum 16 threads. Shrinking of the pool i
 aggressive as threads are reclaimed when they are idle for 10 seconds (rather than
 60 seconds by default).
 
+A `ThreadPoolTaskScheduler` can also be auto-configured if need to be to be associated to
+scheduled task execution (`@EnableScheduling`). The thread pool uses one thread by default
+and those settings can be fine-tuned using the `spring.task.scheduling` namespace.
+
+Both a `TaskExecutorBuilder` and `TaskSchedulerBuilder` bean are made available in the
+context if a custom executor or scheduler needs to be created.
 
 
 

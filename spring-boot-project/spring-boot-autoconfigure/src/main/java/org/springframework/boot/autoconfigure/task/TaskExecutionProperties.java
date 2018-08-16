@@ -24,16 +24,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * Configuration properties for task execution.
  *
  * @author Stephane Nicoll
+ * @since 2.1.0
  */
-@ConfigurationProperties("spring.task")
-public class TaskProperties {
+@ConfigurationProperties("spring.task.execution")
+public class TaskExecutionProperties {
 
 	private final Pool pool = new Pool();
 
 	/**
 	 * Prefix to use for the names of newly created threads.
 	 */
-	private String threadNamePrefix = "executor-";
+	private String threadNamePrefix = "task-";
 
 	public Pool getPool() {
 		return this.pool;
