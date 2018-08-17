@@ -1496,8 +1496,8 @@ server] to use can be provided using:
 ==== JMX
 Micrometer provides a hierarchical mapping to
 {micrometer-registry-documentation}/jmx[JMX], primarily as a cheap and portable way to
-view metrics locally.By default, metrics are exported to the `metrics` JMX domain. The
-domain to use can be provided provided using:
+view metrics locally. By default, metrics are exported to the `metrics` JMX domain. The
+domain to use can be provided using:
 
 [source,properties,indent=0]
 ----
@@ -2084,7 +2084,7 @@ services use self-signed certificates, you need to set the following property:
 
 === Custom context path
 
-If the server's context-path has been configured to anything other then `/`, the Cloud
+If the server's context-path has been configured to anything other than `/`, the Cloud
 Foundry endpoints will not be available at the root of the application. For example, if
 `server.servlet.context-path=/app`, Cloud Foundry endpoints will be available at
 `/app/cloudfoundryapplication/*`.

@@ -35,16 +35,15 @@ import org.apache.commons.logging.LogFactory;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.CachedIntrospectionResults;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.groovy.GroovyBeanDefinitionReader;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.boot.Banner.Mode;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
+import org.springframework.boot.web.reactive.context.StandardReactiveWebEnvironment;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ApplicationListener;
@@ -237,7 +236,7 @@ public class SpringApplication {
 
 	private Set<String> additionalProfiles = new HashSet<>();
 
-	private boolean allowBeanDefinitionOverriding;
+	private boolean isCustomEnvironment = false;
 
 	/**
 	 * Create a new {@link SpringApplication} instance. The application context will load
@@ -364,12 +363,22 @@ public class SpringApplication {
 		configureEnvironment(environment, applicationArguments.getSourceArgs());
 		listeners.environmentPrepared(environment);
 		bindToSpringApplication(environment);
-		if (this.webApplicationType == WebApplicationType.NONE) {
+		if (!this.isCustomEnvironment) {
 			environment = new EnvironmentConverter(getClassLoader())
-					.convertToStandardEnvironmentIfNecessary(environment);
+					.convertEnvironmentIfNecessary(environment, deduceEnvironmentClass());
 		}
 		ConfigurationPropertySources.attach(environment);
 		return environment;
+	}
+
+	private Class<? extends StandardEnvironment> deduceEnvironmentClass() {
+		if (this.webApplicationType == WebApplicationType.SERVLET) {
+			return StandardServletEnvironment.class;
+		}
+		if (this.webApplicationType == WebApplicationType.REACTIVE) {
+			return StandardReactiveWebEnvironment.class;
+		}
+		return StandardEnvironment.class;
 	}
 
 	private void prepareContext(ConfigurableApplicationContext context,
@@ -385,15 +394,12 @@ public class SpringApplication {
 		}
 
 		// Add boot specific singleton beans
-		ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
-		beanFactory.registerSingleton("springApplicationArguments", applicationArguments);
+		context.getBeanFactory().registerSingleton("springApplicationArguments",
+				applicationArguments);
 		if (printedBanner != null) {
-			beanFactory.registerSingleton("springBootBanner", printedBanner);
+			context.getBeanFactory().registerSingleton("springBootBanner", printedBanner);
 		}
-		if (beanFactory instanceof DefaultListableBeanFactory) {
-			((DefaultListableBeanFactory) beanFactory)
-					.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
-		}
+
 		// Load the sources
 		Set<Object> sources = getAllSources();
 		Assert.notEmpty(sources, "Sources must not be empty");
@@ -468,6 +474,9 @@ public class SpringApplication {
 		}
 		if (this.webApplicationType == WebApplicationType.SERVLET) {
 			return new StandardServletEnvironment();
+		}
+		if (this.webApplicationType == WebApplicationType.REACTIVE) {
+			return new StandardReactiveWebEnvironment();
 		}
 		return new StandardEnvironment();
 	}
@@ -943,12 +952,36 @@ public class SpringApplication {
 	}
 
 	/**
+	 * Returns whether this {@link SpringApplication} is running within a web environment.
+	 * @return {@code true} if running within a web environment, otherwise {@code false}.
+	 * @see #setWebEnvironment(boolean)
+	 * @deprecated since 2.0.0 in favor of {@link #getWebApplicationType()}
+	 */
+	@Deprecated
+	public boolean isWebEnvironment() {
+		return this.webApplicationType == WebApplicationType.SERVLET;
+	}
+
+	/**
 	 * Returns the type of web application that is being run.
 	 * @return the type of web application
 	 * @since 2.0.0
 	 */
 	public WebApplicationType getWebApplicationType() {
 		return this.webApplicationType;
+	}
+
+	/**
+	 * Sets if this application is running within a web environment. If not specified will
+	 * attempt to deduce the environment based on the classpath.
+	 * @param webEnvironment if the application is running in a web environment
+	 * @deprecated since 2.0.0 in favor of
+	 * {@link #setWebApplicationType(WebApplicationType)}
+	 */
+	@Deprecated
+	public void setWebEnvironment(boolean webEnvironment) {
+		this.webApplicationType = (webEnvironment ? WebApplicationType.SERVLET
+				: WebApplicationType.NONE);
 	}
 
 	/**
@@ -960,17 +993,6 @@ public class SpringApplication {
 	public void setWebApplicationType(WebApplicationType webApplicationType) {
 		Assert.notNull(webApplicationType, "WebApplicationType must not be null");
 		this.webApplicationType = webApplicationType;
-	}
-
-	/**
-	 * Sets if bean definition overriding, by registering a definition with the same name
-	 * as an existing definition, should be allowed. Defaults to {@code false}.
-	 * @param allowBeanDefinitionOverriding if overriding is allowed
-	 * @since 2.1
-	 * @see DefaultListableBeanFactory#setAllowBeanDefinitionOverriding(boolean)
-	 */
-	public void setAllowBeanDefinitionOverriding(boolean allowBeanDefinitionOverriding) {
-		this.allowBeanDefinitionOverriding = allowBeanDefinitionOverriding;
 	}
 
 	/**
@@ -1071,6 +1093,7 @@ public class SpringApplication {
 	 * @param environment the environment
 	 */
 	public void setEnvironment(ConfigurableEnvironment environment) {
+		this.isCustomEnvironment = true;
 		this.environment = environment;
 	}
 
