@@ -40,21 +40,21 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  */
 @ConditionalOnClass(ThreadPoolTaskExecutor.class)
 @Configuration
-@EnableConfigurationProperties(TaskProperties.class)
-public class TaskExecutorAutoConfiguration {
+@EnableConfigurationProperties(TaskExecutionProperties.class)
+public class TaskExecutionAutoConfiguration {
 
 	/**
 	 * Bean name of the application {@link TaskExecutor}.
 	 */
 	public static final String APPLICATION_TASK_EXECUTOR_BEAN_NAME = "applicationTaskExecutor";
 
-	private final TaskProperties properties;
+	private final TaskExecutionProperties properties;
 
 	private final ObjectProvider<TaskExecutorCustomizer> taskExecutorCustomizers;
 
 	private final ObjectProvider<TaskDecorator> taskDecorator;
 
-	public TaskExecutorAutoConfiguration(TaskProperties properties,
+	public TaskExecutionAutoConfiguration(TaskExecutionProperties properties,
 			ObjectProvider<TaskExecutorCustomizer> taskExecutorCustomizers,
 			ObjectProvider<TaskDecorator> taskDecorator) {
 		this.properties = properties;
@@ -65,20 +65,15 @@ public class TaskExecutorAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public TaskExecutorBuilder taskExecutorBuilder() {
-		TaskExecutorBuilder builder = new TaskExecutorBuilder();
-		TaskProperties.Pool pool = this.properties.getPool();
-		builder = builder.queueCapacity(pool.getQueueCapacity())
+		TaskExecutionProperties.Pool pool = this.properties.getPool();
+		return new TaskExecutorBuilder().queueCapacity(pool.getQueueCapacity())
 				.corePoolSize(pool.getCoreSize()).maxPoolSize(pool.getMaxSize())
 				.allowCoreThreadTimeOut(pool.isAllowCoreThreadTimeout())
-				.keepAlive(pool.getKeepAlive());
-		builder = builder.threadNamePrefix(this.properties.getThreadNamePrefix());
-		builder = builder.customizers(
-				this.taskExecutorCustomizers.stream().collect(Collectors.toList()));
-		TaskDecorator taskDecorator = this.taskDecorator.getIfUnique();
-		if (taskDecorator != null) {
-			builder = builder.taskDecorator(taskDecorator);
-		}
-		return builder;
+				.keepAlive(pool.getKeepAlive())
+				.threadNamePrefix(this.properties.getThreadNamePrefix())
+				.customizers(this.taskExecutorCustomizers.stream()
+						.collect(Collectors.toList()))
+				.taskDecorator(this.taskDecorator.getIfUnique());
 	}
 
 	@Bean(name = APPLICATION_TASK_EXECUTOR_BEAN_NAME)

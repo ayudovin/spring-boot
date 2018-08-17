@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 the original author or authors.
+ * Copyright 2012-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.springframework.boot.autoconfigure.security.servlet;
 
-package org.springframework.boot.loader.tools;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 /**
- * Indicates that the annotated element uses unsafe Java calls.
+ * Interface that can be used to provide a {@link RequestMatcher} that can be used with
+ * Spring Security.
  *
- * @author Phillip Webb
+ * @author Madhura Bhave
+ * @since 2.0.5
  */
-@Retention(RetentionPolicy.CLASS)
-@Target({ ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.TYPE })
-@Documented
-@interface UsesUnsafeJava {
+@FunctionalInterface
+public interface RequestMatcherProvider {
+
+	RequestMatcher getRequestMatcher(String pattern);
 
 }

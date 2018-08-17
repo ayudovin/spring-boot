@@ -37,7 +37,7 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
-import org.springframework.boot.autoconfigure.task.TaskExecutorAutoConfiguration;
+import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.boot.autoconfigure.validation.ValidatorAdapter;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter;
@@ -481,7 +481,7 @@ public class WebMvcAutoConfigurationTests {
 	public void asyncTaskExecutorWithApplicationTaskExecutor() {
 		this.contextRunner
 				.withConfiguration(
-						AutoConfigurations.of(TaskExecutorAutoConfiguration.class))
+						AutoConfigurations.of(TaskExecutionAutoConfiguration.class))
 				.run((context) -> {
 					assertThat(context).hasSingleBean(AsyncTaskExecutor.class);
 					assertThat(ReflectionTestUtils.getField(
@@ -496,7 +496,7 @@ public class WebMvcAutoConfigurationTests {
 		this.contextRunner
 				.withUserConfiguration(CustomApplicationTaskExecutorConfig.class)
 				.withConfiguration(
-						AutoConfigurations.of(TaskExecutorAutoConfiguration.class))
+						AutoConfigurations.of(TaskExecutionAutoConfiguration.class))
 				.run((context) -> {
 					assertThat(context).doesNotHaveBean(AsyncTaskExecutor.class);
 					assertThat(ReflectionTestUtils.getField(
@@ -510,7 +510,7 @@ public class WebMvcAutoConfigurationTests {
 	public void asyncTaskExecutorWithMvcConfigurerCanOverrideExecutor() {
 		this.contextRunner.withUserConfiguration(CustomAsyncTaskExecutorConfigurer.class)
 				.withConfiguration(
-						AutoConfigurations.of(TaskExecutorAutoConfiguration.class))
+						AutoConfigurations.of(TaskExecutionAutoConfiguration.class))
 				.run((context) -> {
 					assertThat(ReflectionTestUtils.getField(
 							context.getBean(RequestMappingHandlerAdapter.class),
@@ -524,7 +524,7 @@ public class WebMvcAutoConfigurationTests {
 	public void asyncTaskExecutorWithCustomNonApplicationTaskExecutor() {
 		this.contextRunner.withUserConfiguration(CustomAsyncTaskExecutorConfig.class)
 				.withConfiguration(
-						AutoConfigurations.of(TaskExecutorAutoConfiguration.class))
+						AutoConfigurations.of(TaskExecutionAutoConfiguration.class))
 				.run((context) -> {
 					assertThat(context).hasSingleBean(AsyncTaskExecutor.class);
 					assertThat(ReflectionTestUtils.getField(
