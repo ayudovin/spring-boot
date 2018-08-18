@@ -27,7 +27,7 @@ import org.springframework.web.reactive.result.method.annotation.RequestMappingH
  * to choose from redundant WebFlux components.
  *
  * @author Artsiom Yudovin
- * @since 2.0.1
+ * @since 2.1.0
  * @see org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration.EnableWebFluxConfiguration
  */
 public interface WebFluxRegistrations {

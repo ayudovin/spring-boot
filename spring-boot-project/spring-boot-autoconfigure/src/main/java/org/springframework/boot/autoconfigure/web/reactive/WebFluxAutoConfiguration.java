@@ -255,27 +255,13 @@ public class WebFluxAutoConfiguration {
 			return ValidatorAdapter.get(getApplicationContext(), getValidator());
 		}
 
-		@Bean
-		@Override
-		public RequestMappingHandlerAdapter requestMappingHandlerAdapter() {
-			RequestMappingHandlerAdapter adapter = super.requestMappingHandlerAdapter();
-			return adapter;
-		}
-
 		@Override
 		protected RequestMappingHandlerAdapter createRequestMappingHandlerAdapter() {
 			if (this.webFluxRegistrations != null && this.webFluxRegistrations
 					.getRequestMappingHandlerAdapter() != null) {
 				return this.webFluxRegistrations.getRequestMappingHandlerAdapter();
 			}
-
 			return super.createRequestMappingHandlerAdapter();
-		}
-
-		@Bean
-		@Override
-		public RequestMappingHandlerMapping requestMappingHandlerMapping() {
-			return super.requestMappingHandlerMapping();
 		}
 
 		@Override
