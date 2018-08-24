@@ -49,9 +49,8 @@ public class DataRedisTestPropertiesIntegrationTests {
 	private Environment environment;
 
 	@Test
-	public void environmentWitNewProfile() {
-		String profile = this.environment.getActiveProfiles()[0];
-		assertThat(profile).isEqualTo("test");
+	public void environmentWithNewProfile() {
+		assertThat(this.environment.getActiveProfiles()).containsExactly("test");
 	}
 
 	static class Initializer
