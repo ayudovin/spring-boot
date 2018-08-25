@@ -30,6 +30,8 @@ import org.springframework.util.StringUtils;
  *
  * @author Madhura Bhave
  * @author Phillip Webb
+ * @author Artsiom Yudovin
+ * @author MyeongHyeon Lee
  */
 @ConfigurationProperties(prefix = "spring.security.oauth2.client")
 public class OAuth2ClientProperties {
@@ -60,9 +62,6 @@ public class OAuth2ClientProperties {
 	private void validateRegistration(Registration registration) {
 		if (!StringUtils.hasText(registration.getClientId())) {
 			throw new IllegalStateException("Client id must not be empty.");
-		}
-		if (!StringUtils.hasText(registration.getClientSecret())) {
-			throw new IllegalStateException("Client secret must not be empty.");
 		}
 	}
 
@@ -198,6 +197,11 @@ public class OAuth2ClientProperties {
 		private String userInfoUri;
 
 		/**
+		 * User info authentication method for the provider.
+		 */
+		private String userInfoAuthenticationMethod;
+
+		/**
 		 * Name of the attribute that will be used to extract the username from the call
 		 * to 'userInfoUri'.
 		 */
@@ -235,6 +239,14 @@ public class OAuth2ClientProperties {
 
 		public void setUserInfoUri(String userInfoUri) {
 			this.userInfoUri = userInfoUri;
+		}
+
+		public String getUserInfoAuthenticationMethod() {
+			return this.userInfoAuthenticationMethod;
+		}
+
+		public void setUserInfoAuthenticationMethod(String userInfoAuthenticationMethod) {
+			this.userInfoAuthenticationMethod = userInfoAuthenticationMethod;
 		}
 
 		public String getUserNameAttribute() {
