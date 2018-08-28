@@ -329,7 +329,7 @@ public class RedisProperties {
 		/**
 		 * Whether to enable share native connection.
 		 */
-		private Boolean shareNativeConnection;
+		private boolean shareNativeConnection = true;
 
 		public Duration getShutdownTimeout() {
 			return this.shutdownTimeout;
@@ -347,7 +347,7 @@ public class RedisProperties {
 			this.pool = pool;
 		}
 
-		public Boolean getShareNativeConnection() {
+		public boolean getShareNativeConnection() {
 			return this.shareNativeConnection;
 		}
 
