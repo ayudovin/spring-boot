@@ -14,23 +14,33 @@
  * limitations under the License.
  */
 
-package org.springframework.boot.autoconfigure.couchbase;
+package org.springframework.boot.actuate.autoconfigure.metrics.web;
 
-import org.springframework.boot.autoconfigure.condition.ConditionMessage;
-import org.springframework.boot.autoconfigure.condition.OnPropertyListCondition;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Condition to determine if {@code spring.couchbase.bootstrap-hosts} is specified.
+ * Test controller used by metrics tests.
  *
+ * @author Dmytro Nosan
  * @author Stephane Nicoll
- * @author Madhura Bhave
- * @author Eneias Silva
  */
-class OnBootstrapHostsCondition extends OnPropertyListCondition {
+@RestController
+public class TestController {
 
-	OnBootstrapHostsCondition() {
-		super("spring.couchbase.bootstrap-hosts",
-				() -> ConditionMessage.forCondition("Couchbase Bootstrap Hosts"));
+	@GetMapping("test0")
+	public String test0() {
+		return "test0";
+	}
+
+	@GetMapping("test1")
+	public String test1() {
+		return "test1";
+	}
+
+	@GetMapping("test2")
+	public String test2() {
+		return "test2";
 	}
 
 }

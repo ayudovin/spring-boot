@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.boot.actuate.autoconfigure.metrics.web.reactive;
+package org.springframework.boot.actuate.autoconfigure.metrics.web.client;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.config.MeterFilter;
@@ -23,60 +23,46 @@ import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfigu
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsProperties;
 import org.springframework.boot.actuate.autoconfigure.metrics.OnlyOnceLoggingDenyMeterFilter;
 import org.springframework.boot.actuate.autoconfigure.metrics.export.simple.SimpleMetricsExportAutoConfiguration;
-import org.springframework.boot.actuate.metrics.web.reactive.server.DefaultWebFluxTagsProvider;
-import org.springframework.boot.actuate.metrics.web.reactive.server.MetricsWebFilter;
-import org.springframework.boot.actuate.metrics.web.reactive.server.WebFluxTagsProvider;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 
 /**
- * {@link EnableAutoConfiguration Auto-configuration} for instrumentation of Spring
- * WebFlux applications.
+ * {@link EnableAutoConfiguration Auto-configuration} for HTTP client-related metrics.
  *
  * @author Jon Schneider
- * @author Dmytro Nosan
- * @since 2.0.0
+ * @author Phillip Webb
+ * @author Stephane Nicoll
+ * @since 2.1.0
  */
 @Configuration
 @AutoConfigureAfter({ MetricsAutoConfiguration.class,
 		SimpleMetricsExportAutoConfiguration.class })
+@ConditionalOnClass(MeterRegistry.class)
 @ConditionalOnBean(MeterRegistry.class)
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
-public class WebFluxMetricsAutoConfiguration {
+@Import({ RestTemplateMetricsConfiguration.class, WebClientMetricsConfiguration.class })
+public class HttpClientMetricsAutoConfiguration {
 
 	private final MetricsProperties properties;
 
-	public WebFluxMetricsAutoConfiguration(MetricsProperties properties) {
+	public HttpClientMetricsAutoConfiguration(MetricsProperties properties) {
 		this.properties = properties;
 	}
 
 	@Bean
-	@ConditionalOnMissingBean(WebFluxTagsProvider.class)
-	public DefaultWebFluxTagsProvider webfluxTagConfigurer() {
-		return new DefaultWebFluxTagsProvider();
-	}
-
-	@Bean
-	public MetricsWebFilter webfluxMetrics(MeterRegistry registry,
-			WebFluxTagsProvider tagConfigurer) {
-		return new MetricsWebFilter(registry, tagConfigurer,
-				this.properties.getWeb().getServer().getRequestsMetricName());
-	}
-
-	@Bean
 	@Order(0)
-	public MeterFilter metricsHttpServerUriTagFilter() {
-		String metricName = this.properties.getWeb().getServer().getRequestsMetricName();
-		MeterFilter filter = new OnlyOnceLoggingDenyMeterFilter(() -> String
-				.format("Reached the maximum number of URI tags for '%s'.", metricName));
+	public MeterFilter metricsHttpClientUriTagFilter() {
+		String metricName = this.properties.getWeb().getClient().getRequestsMetricName();
+		MeterFilter denyFilter = new OnlyOnceLoggingDenyMeterFilter(() -> String
+				.format("Reached the maximum number of URI tags for '%s'. Are you using "
+						+ "'uriVariables'?", metricName));
 		return MeterFilter.maximumAllowableTags(metricName, "uri",
-				this.properties.getWeb().getServer().getMaxUriTags(), filter);
+				this.properties.getWeb().getClient().getMaxUriTags(), denyFilter);
 	}
 
 }

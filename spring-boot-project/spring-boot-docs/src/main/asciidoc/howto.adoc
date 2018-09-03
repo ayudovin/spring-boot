@@ -1326,7 +1326,7 @@ source for more details.
 
 [[howto-switch-off-the-spring-mvc-dispatcherservlet]]
 === Switch Off the Spring MVC DispatcherServlet
-By default, All content is served from the root of your application (`/`) down. If you
+By default, all content is served from the root of your application (`/`). If you
 would rather map to a different path, you can configure one as follows:
 
 [source,properties,indent=0,subs="verbatim"]
@@ -1334,7 +1334,7 @@ would rather map to a different path, you can configure one as follows:
 	spring.mvc.servlet.path=/acme
 ----
 
-If you have additional servlets you can declare a  `@Bean` of type `Servlet` or
+If you have additional servlets you can declare a `@Bean` of type `Servlet` or
 `ServletRegistrationBean` for each and Spring Boot will register them transparently to the
 container. Because servlets are registered that way, they can be mapped to a sub-context
 of the `DispatcherServlet` without invoking it.
@@ -1414,6 +1414,31 @@ For more detail, see the following sections:
 * {sc-spring-boot-autoconfigure}/thymeleaf/ThymeleafAutoConfiguration.{sc-ext}[`ThymeleafAutoConfiguration`]
 * {sc-spring-boot-autoconfigure}/freemarker/FreeMarkerAutoConfiguration.{sc-ext}[`FreeMarkerAutoConfiguration`]
 * {sc-spring-boot-autoconfigure}/groovy/template/GroovyTemplateAutoConfiguration.{sc-ext}[`GroovyTemplateAutoConfiguration`]
+
+
+
+[[howto-use-test-with-spring-security]]
+== Testing With Spring Security
+Spring Security provides support for running tests as a specific user.
+For example, the test in the snippet below will run with an authenticated user
+that has the `ADMIN` role.
+
+[source,java,indent=0]
+----
+	@Test
+	@WithMockUser(roles="ADMIN")
+	public void requestProtectedUrlWithUser() throws Exception {
+		mvc
+			.perform(get("/"))
+			...
+	}
+----
+
+Spring Security provides comprehensive integration with Spring MVC Test and
+this can also be used when testing controllers using the `@WebMvcTest` slice and `MockMvc`.
+
+For additional details on Spring Security's testing support, refer to Spring Security's
+https://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle/#test[reference documentation]).
 
 
 
