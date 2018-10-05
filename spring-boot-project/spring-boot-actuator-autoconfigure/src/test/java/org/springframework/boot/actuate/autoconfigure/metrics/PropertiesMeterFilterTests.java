@@ -69,6 +69,14 @@ public class PropertiesMeterFilterTests {
 	}
 
 	@Test
+	public void acceptWhenHasNoMatchingEnabledPropertyShouldReturnNeutral() {
+		PropertiesMeterFilter filter = new PropertiesMeterFilter(
+				createProperties("enable.something.else=false"));
+		assertThat(filter.accept(createMeterId("spring.boot")))
+				.isEqualTo(MeterFilterReply.NEUTRAL);
+	}
+
+	@Test
 	public void acceptWhenHasEnableFalseShouldReturnDeny() {
 		PropertiesMeterFilter filter = new PropertiesMeterFilter(
 				createProperties("enable.spring.boot=false"));
@@ -252,14 +260,6 @@ public class PropertiesMeterFilterTests {
 		assertThat(filter.configure(createMeterId("spring.boot"),
 				DistributionStatisticConfig.DEFAULT).getSlaBoundaries())
 						.containsExactly(4000000, 5000000, 6000000);
-	}
-
-	@Test
-	public void acceptWhenHasNoMatchingEnabledPropertyShouldReturnNeutral() {
-		PropertiesMeterFilter filter = new PropertiesMeterFilter(
-				createProperties("enable.something.else=false"));
-		assertThat(filter.accept(createMeterId("spring.boot")))
-				.isEqualTo(MeterFilterReply.NEUTRAL);
 	}
 
 	private Id createMeterId(String name) {
