@@ -135,7 +135,7 @@ content into your application. Rather, pick only the properties that you need.
 	spring.messages.cache-duration= # Loaded resource bundle files cache duration. When not set, bundles are cached forever. If a duration suffix is not specified, seconds will be used.
 	spring.messages.encoding=UTF-8 # Message bundles encoding.
 	spring.messages.fallback-to-system-locale=true # Whether to fall back to the system Locale if no files for a specific Locale have been found.
-	spring.messages.reloadable=false # Whether to use a ReloadableResourceBundleMessageSource instead of the default ResourceBundleMessageSource. Recommended during development only.
+	spring.messages.reloadable=false # Whether to use a "ReloadableResourceBundleMessageSource" rather than the default "ResourceBundleMessageSource". Recommended during development only.
 	spring.messages.use-code-as-default-message=false # Whether to use the message code as the default message instead of throwing a "NoSuchMessageException". Recommended during development only.
 
 	# OUTPUT
@@ -541,8 +541,7 @@ content into your application. Rather, pick only the properties that you need.
 
 	# SECURITY OAUTH2 CLIENT ({sc-spring-boot-autoconfigure}/security/oauth2/client/OAuth2ClientProperties.{sc-ext}[OAuth2ClientProperties])
 	spring.security.oauth2.client.provider.*= # OAuth provider details.
-	spring.security.oauth2.client.registration.authorization-code.*= # OAuth2 authorization_code client registrations.
-    spring.security.oauth2.client.registration.login.*= # OpenID Connect client registrations.
+	spring.security.oauth2.client.registration.*= # OAuth client registrations.
 
 	# SECURITY OAUTH2 RESOURCE SERVER ({sc-spring-boot-autoconfigure}/security/oauth2/resource/OAuth2ResourceServerProperties.{sc-ext}[OAuth2ResourceServerProperties])
 	spring.security.oauth2.resourceserver.jwt.jwk-set-uri= # JSON Web Key URI to use to verify the JWT token.
@@ -637,6 +636,7 @@ content into your application. Rather, pick only the properties that you need.
 	spring.data.cassandra.consistency-level= # Queries consistency level.
 	spring.data.cassandra.contact-points=localhost # Cluster node addresses.
 	spring.data.cassandra.fetch-size= # Queries default fetch size.
+	spring.data.cassandra.jmx-enabled=false # Whether to enable JMX reporting.
 	spring.data.cassandra.keyspace-name= # Keyspace name to use.
 	spring.data.cassandra.port= # Port of the Cassandra server.
 	spring.data.cassandra.password= # Login password of the server.
@@ -925,7 +925,7 @@ content into your application. Rather, pick only the properties that you need.
 	spring.mongodb.embedded.storage.database-dir= # Directory used for data storage.
 	spring.mongodb.embedded.storage.oplog-size= # Maximum size of the oplog.
 	spring.mongodb.embedded.storage.repl-set-name= # Name of the replica set.
-	spring.mongodb.embedded.version=3.2.2 # Version of Mongo to use.
+	spring.mongodb.embedded.version=3.5.5 # Version of Mongo to use.
 
 	# REDIS ({sc-spring-boot-autoconfigure}/data/redis/RedisProperties.{sc-ext}[RedisProperties])
 	spring.redis.cluster.max-redirects= # Maximum number of redirects to follow when executing commands across the cluster.
@@ -1346,7 +1346,6 @@ content into your application. Rather, pick only the properties that you need.
 	management.health.db.enabled=true # Whether to enable database health check.
 	management.health.cassandra.enabled=true # Whether to enable Cassandra health check.
 	management.health.couchbase.enabled=true # Whether to enable Couchbase health check.
-	management.health.couchbase.timeout=1000ms # Timeout for getting the Bucket information from the server.
 	management.health.defaults.enabled=true # Whether to enable default health indicators.
 	management.health.diskspace.enabled=true # Whether to enable disk space health check.
 	management.health.diskspace.path= # Path used to compute the available disk space.
@@ -1378,8 +1377,10 @@ content into your application. Rather, pick only the properties that you need.
 	management.info.git.mode=simple # Mode to use to expose git information.
 
 	# METRICS
-	management.metrics.distribution.percentiles-histogram.*= # Whether meter IDs starting with the specified name should publish percentile histograms.
+	management.metrics.distribution.maximum-expected-value.*= # Maximum value that meter IDs starting-with the specified name are expected to observe.
+	management.metrics.distribution.minimum-expected-value.*= # Minimum value that meter IDs starting-with the specified name are expected to observe.
 	management.metrics.distribution.percentiles.*= # Specific computed non-aggregable percentiles to ship to the backend for meter IDs starting-with the specified name.
+	management.metrics.distribution.percentiles-histogram.*= # Whether meter IDs starting with the specified name should publish percentile histograms.
 	management.metrics.distribution.sla.*= # Specific SLA boundaries for meter IDs starting-with the specified name. The longest match wins.
 	management.metrics.enable.*= # Whether meter IDs starting-with the specified name should be enabled. The longest match wins, the key `all` can also be used to configure all meters.
 	management.metrics.export.atlas.batch-size=10000 # Number of measurements per request to use for this backend. If more measurements are found, then multiple requests will be made.
@@ -1466,6 +1467,15 @@ content into your application. Rather, pick only the properties that you need.
 	management.metrics.export.jmx.domain=metrics # Metrics JMX domain name.
 	management.metrics.export.jmx.enabled=true # Whether exporting of metrics to JMX is enabled.
 	management.metrics.export.jmx.step=1m # Step size (i.e. reporting frequency) to use.
+	management.metrics.export.kairos.batch-size=10000 # Number of measurements per request to use for this backend. If more measurements are found, then multiple requests will be made.
+	management.metrics.export.kairos.connect-timeout=1s # Connection timeout for requests to this backend.
+	management.metrics.export.kairos.enabled=true # Whether exporting of metrics to this backend is enabled.
+	management.metrics.export.kairos.num-threads=2 # Number of threads to use with the metrics publishing scheduler.
+	management.metrics.export.kairos.password= # Login password of the KairosDB server.
+	management.metrics.export.kairos.read-timeout=10s # Read timeout for requests to this backend.
+	management.metrics.export.kairos.step=1m # Step size (i.e. reporting frequency) to use.
+	management.metrics.export.kairos.uri= http://localhost:8080/api/v1/datapoints # URI of the KairosDB server.
+	management.metrics.export.kairos.user-name= # Login user of the KairosDB server.
 	management.metrics.export.newrelic.account-id= # New Relic account ID.
 	management.metrics.export.newrelic.api-key= # New Relic API key.
 	management.metrics.export.newrelic.batch-size=10000 # Number of measurements per request to use for this backend. If more measurements are found, then multiple requests will be made.
@@ -1483,7 +1493,7 @@ content into your application. Rather, pick only the properties that you need.
 	management.metrics.export.prometheus.pushgateway.grouping-key= # Grouping key for the pushed metrics.
 	management.metrics.export.prometheus.pushgateway.job= # Job identifier for this application instance.
 	management.metrics.export.prometheus.pushgateway.push-rate=1m # Frequency with which to push metrics.
-	management.metrics.export.prometheus.pushgateway.shutdown-operation= # Operation that should be performed on shutdown (none, push, delete).
+	management.metrics.export.prometheus.pushgateway.shutdown-operation= # Operation that should be performed on shutdown.
 	management.metrics.export.signalfx.access-token= # SignalFX access token.
 	management.metrics.export.signalfx.batch-size=10000 # Number of measurements per request to use for this backend. If more measurements are found, then multiple requests will be made.
 	management.metrics.export.signalfx.connect-timeout=1s # Connection timeout for requests to this backend.
