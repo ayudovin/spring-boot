@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 
-package org.springframework.boot.web.codec;
-
-import org.springframework.http.codec.CodecConfigurer;
+package org.springframework.boot.autoconfigure.condition;
 
 /**
- * Callback interface that can be used to customize codecs configuration for an HTTP
- * client and/or server with a {@link CodecConfigurer}.
+ * Simple parameterized container for testing {@link ConditionalOnBean} and
+ * {@link ConditionalOnMissingBean}.
  *
- * @author Brian Clozel
- * @since 2.0.0
+ * @param <T> The bean type
+ * @author Phillip Webb
  */
-@FunctionalInterface
-public interface CodecCustomizer {
-
-	/**
-	 * Callback to customize a {@link CodecConfigurer} instance.
-	 * @param configurer codec configurer to customize
-	 */
-	void customize(CodecConfigurer configurer);
+public class TestParameterizedContainer<T> {
 
 }
